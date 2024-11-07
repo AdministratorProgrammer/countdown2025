@@ -4,18 +4,255 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<script src="https://telegram.org/js/telegram-web-app.js"></script>
-	<link rel="stylesheet" type="text/css" href="styles/web3_app_portal.css">
-	<script type="text/javascript" src="scripts/main.js"></script>
+	<!--<script src="https://telegram.org/js/telegram-web-app.js"></script>-->
 
 	<title>Обратный отсчёт до НГ</title>
 </head>
 <body>
-	<div><script src="https://allcalc.ru/widgets/script.js"></script></div>
-	<style type="text/css">
-		body {
-			background-color: white;
-		}
+	<style>
+	    body {
+	        font-family: 'Open Sans',sans-serif;
+	        font-size: 14px;
+	        background-color: #17212b;
+	    }
+
+	    #calc {
+	        min-width: 100px;
+	        max-width: 750px;
+	        text-align: center
+	        display: flex;
+	    }
+
+	    a {
+	        color: #485291;
+	    }
+
+	    #timer-numb {
+	        display: none
+	    }
+
+	    #timer {
+	        margin-bottom: 15px
+	    }
+
+	    h2 {
+	        font-weight: 2;
+	        color: #fff;
+	    }
+
+	    a img {
+	        vertical-align: middle;
+	        width: 25px;
+	        opacity: .1
+	    }
 	</style>
+	<div id="calc">
+	    <h2>
+	        До Нового Года осталось
+	    </h2>
+	    <div id="timer"></div>
+	    <div id="timer-numb">
+	        До Нового Года осталось: <span id="days"></span>
+	        <font id="dayst"></font>
+	        <span id="hours"></span>
+	        <font id="hourst"></font>
+	        <span id="minutes"></span>
+	        <font id="minutest"></font>
+	        <span id="seconds"></span>
+	        <font id="secondst"></font>
+	        <span id="milseconds"></span>
+	        <font id="milsecondst"></font>
+	    </div>
+	    Окончание отсчёта: <span id="enddate"></span>
+	</div>
+	<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+	<script>
+	    var year = (new Date).getFullYear()
+	      , dates = new Date(year + "/01/01 00:00:00");
+	    if (new Date > new Date(dates))
+	        dates = new Date(+year + 1 + "/01/01 00:00:00");
+	    var day = new Array("Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота")
+	      , month = new Array("января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря");
+	    function get_aff(t) {
+	        return t = String(t),
+	        val_lastnum = t.substr(-1),
+	        11 <= t && t <= 19 || 5 <= val_lastnum && val_lastnum <= 9 || 0 == val_lastnum || 12 <= t.substr(-2) && t.substr(-2) <= 14 || 1 != t && 1 == t.substr(-2, 1) ? r = "r_mn" : 1 == val_lastnum ? r = "im" : 2 != val_lastnum && 3 != val_lastnum && 4 != val_lastnum || (r = "r_ed"),
+	        r
+	    }
+	    function oKcopy(t) {
+	        var e = t.innerHTML;
+	        t.innerHTML = "Скопировано",
+	        setTimeout(function() {
+	            t.innerHTML = e
+	        }, 1250)
+	    }
+	    function CopyToClipboard(t) {
+	        var e = $("<textarea  readonly='readonly' style='font-size:50px;position:fixed;top:0;left:0;height:100%;width:100%;'>");
+	        if ($("#calc").append(e),
+	        e.val($(t).text()),
+	        navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+	            var r = e.get(0)
+	              , a = r.contentEditable
+	              , s = r.readOnly;
+	            r.contentEditable = !0,
+	            r.readOnly = !1;
+	            var n = document.createRange();
+	            n.selectNodeContents(r);
+	            var i = window.getSelection();
+	            i.removeAllRanges(),
+	            i.addRange(n),
+	            r.setSelectionRange(0, 999999),
+	            r.contentEditable = a,
+	            r.readOnly = s,
+	            alert("Скопировано")
+	        } else
+	            e.select();
+	        document.execCommand("copy"),
+	        e.blur(),
+	        e.remove()
+	    }
+	    $("#enddate").text(day[dates.getDay()] + " " + ("0" + dates.getDate()).substr(-2) + " " + month[dates.getMonth()] + " " + dates.getFullYear() + " года " + ("0" + dates.getHours()).substr(-2) + ":" + ("0" + dates.getMinutes()).substr(-2)),
+	    urlvv = document.location.host;
+	    var ringer = {
+	        countdown_to: dates,
+	        rings: {
+	            day: {
+	                s: 864e5,
+	                max: 365
+	            },
+	            hour: {
+	                s: 36e5,
+	                max: 24
+	            },
+	            min: {
+	                s: 6e4,
+	                max: 60
+	            },
+	            sec: {
+	                s: 1e3,
+	                max: 60
+	            },
+	            milsec: {
+	                s: 1,
+	                max: 1e3
+	            }
+	        },
+	        r_count: 5,
+	        r_spacing: 25,
+	        r_size: 200,
+	        r_thickness: 8,
+	        update_interval: 1,
+	        init: function() {
+	            $r = ringer,
+	            $r.cvs = document.createElement("canvas"),
+	            $r.size = {
+	                w: ($r.r_size + $r.r_thickness) * ($r.r_count - 1) + $r.r_spacing * ($r.r_count - 2),
+	                h: $r.r_size + $r.r_thickness + 370
+	            },
+	            $r.cvs.setAttribute("width", $r.size.w),
+	            $r.cvs.setAttribute("height", $r.size.h),
+	            $r.ctx = $r.cvs.getContext("2d"),
+	            $("#timer").append($r.cvs),
+	            $r.cvs = $($r.cvs),
+	            $r.ctx.textAlign = "center",
+	            $r.actual_size = $r.r_size + $r.r_thickness,
+	            $r.countdown_to_time = new Date($r.countdown_to).getTime(),
+	            $r.go()
+	        },
+	        ctx: null,
+	        go: function() {
+	            var t = 0;
+	            for (var e in $r.time = (new Date).getTime() - $r.countdown_to_time,
+	            1 != urlvv.indexOf("llca") && ($r.time = $r.time + 864e5),
+	            $r.rings)
+	                $r.unit(t++, e, $r.rings[e]);
+	            setTimeout($r.go, $r.update_interval)
+	        },
+	        unit: function(t, e, r) {
+	            var a, s, n, i = r.s;
+	            n = parseFloat($r.time / i),
+	            $r.time -= Math.round(parseInt(n)) * i,
+	            n = Math.abs(n),
+	            $r.cvs.css({
+	                width: $("#calc").width() + "px",
+	                height: $("#calc").width() / ($r.size.w / $r.size.h) + "px"
+	            }),
+	            0 == t ? (a = 440,
+	            a += +t * ($r.r_size + $r.r_spacing + $r.r_thickness),
+	            s = 160,
+	            s += .5 * $r.r_thickness,
+	            $r.r_size = 300) : (a = .5 * $r.r_size + .5 * $r.r_thickness,
+	            a += +(t - 1) * ($r.r_size + $r.r_spacing + $r.r_thickness),
+	            s = 2.2 * $r.r_size,
+	            s += .5 * $r.r_thickness);
+	            var o = (270 - n / r.max * 360) * (Math.PI / 180);
+	            $r.ctx.save(),
+	            $r.ctx.translate(a, s),
+	            $r.ctx.clearRect(-.5 * $r.actual_size, -.5 * $r.actual_size, $r.actual_size, $r.actual_size),
+	            $r.ctx.strokeStyle = "rgba(242, 243, 245)",
+	            $r.ctx.beginPath(),
+	            $r.ctx.arc(0, 0, $r.r_size / 2, 0, 2 * Math.PI, 2),
+	            $r.ctx.lineWidth = $r.r_thickness,
+	            $r.ctx.stroke(),
+	            $r.ctx.strokeStyle = "rgb(255, 163, 16)",
+	            $r.ctx.beginPath(),
+	            $r.ctx.arc(0, 0, $r.r_size / 2, 1.5 * Math.PI, o, 1),
+	            $r.ctx.lineWidth = $r.r_thickness,
+	            $r.ctx.stroke(),
+	            $r.ctx.fillStyle = "#fff",
+	            $r.ctx.font = "20px Helvetica";
+	            var c = {
+	                day: {
+	                    r_mn: "дней",
+	                    im: "день",
+	                    r_ed: "дня"
+	                },
+	                hour: {
+	                    r_mn: "часов",
+	                    im: "час",
+	                    r_ed: "часа"
+	                },
+	                min: {
+	                    r_mn: "минут",
+	                    im: "минута",
+	                    r_ed: "минуты"
+	                },
+	                sec: {
+	                    r_mn: "секунд",
+	                    im: "секунда",
+	                    r_ed: "секунды"
+	                },
+	                milsec: {
+	                    r_mn: "миллисекунды",
+	                    im: "миллисекунды",
+	                    r_ed: "миллисекунды"
+	                }
+	            };
+	            "day" == e && ($r.ctx.fillText(c.day[get_aff(Math.floor(n))].toUpperCase(), 0, 46),
+	            $("#days").text(Math.floor(n)),
+	            $("#dayst").text(c.day[get_aff(Math.floor(n))])),
+	            "hour" == e && ($r.ctx.fillText(c.hour[get_aff(Math.floor(n))].toUpperCase(), 0, 46),
+	            $("#hours").text(Math.floor(n)),
+	            $("#hourst").text(c.hour[get_aff(Math.floor(n))])),
+	            "min" == e && ($r.ctx.fillText(c.min[get_aff(Math.floor(n))].toUpperCase(), 0, 46),
+	            $("#minutes").text(Math.floor(n)),
+	            $("#minutest").text(c.min[get_aff(Math.floor(n))])),
+	            "sec" == e && ($r.ctx.fillText(c.sec[get_aff(Math.floor(n))].toUpperCase(), 0, 46),
+	            $("#seconds").text(Math.floor(n)),
+	            $("#secondst").text(c.sec[get_aff(Math.floor(n))])),
+	            "milsec" == e && ($r.ctx.fillText(c.milsec[get_aff(Math.floor(n))].toUpperCase(), 0, 46),
+	            $("#milseconds").text(Math.floor(n)),
+	            c.milsec.r_mn = "миллисекунд",
+	            c.milsec.im = "миллисекунда",
+	            $("#milsecondst").text(c.milsec[get_aff(Math.floor(n))])),
+	            $r.ctx.font = "bold 80px Helvetica",
+	            $r.ctx.fillText(Math.floor(n), 0, 10),
+	            $r.r_size = 200,
+	            $r.ctx.restore()
+	        }
+	    };
+	    ringer.init();
+	</script>
+
 </body>
 </html>
