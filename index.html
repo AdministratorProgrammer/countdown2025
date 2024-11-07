@@ -9,11 +9,28 @@
 	<title>Обратный отсчёт до НГ</title>
 </head>
 <body>
+
+	<script src="js/snowfall.js"></script>
+	<script type="text/javascript">
+	    (document).ready(function(){
+	        $(document).snowfall({
+	        	flakeCount: 300,
+	            image :"assets/img/snow4.png", 
+	            minSize: 10, 
+	            maxSize:20,
+	            round: true,
+	            shadow: false,
+	        });
+	    });
+	</script>
+
+
 	<style>
 	    body {
 	        font-family: 'Open Sans',sans-serif;
 	        font-size: 14px;
 	        background-color: #17212b;
+	        color: #c5c5c5;
 	    }
 
 	    #calc {
@@ -37,7 +54,7 @@
 
 	    h2 {
 	        font-weight: 2;
-	        color: #fff;
+	        color: #c5c5c5;
 	    }
 
 	    a img {
@@ -63,7 +80,7 @@
 	        <span id="milseconds"></span>
 	        <font id="milsecondst"></font>
 	    </div>
-	    Окончание отсчёта: <span id="enddate"></span>
+	    <p>Окончание отсчёта: <span id="enddate"></span></p>
 	</div>
 	<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 	<script>
@@ -164,7 +181,7 @@
 	            $r.ctx.save(),
 	            $r.ctx.translate(a, s),
 	            $r.ctx.clearRect(-.5 * $r.actual_size, -.5 * $r.actual_size, $r.actual_size, $r.actual_size),
-	            $r.ctx.strokeStyle = "rgba(202, 203, 205)",
+	            $r.ctx.strokeStyle = "rgba(102, 103, 105)",
 	            $r.ctx.beginPath(),
 	            $r.ctx.arc(0, 0, $r.r_size / 2, 0, 2 * Math.PI, 2),
 	            $r.ctx.lineWidth = $r.r_thickness,
