@@ -86,31 +86,6 @@
 	            t.innerHTML = e
 	        }, 1250)
 	    }
-	    function CopyToClipboard(t) {
-	        var e = $("<textarea  readonly='readonly' style='font-size:50px;position:fixed;top:0;left:0;height:100%;width:100%;'>");
-	        if ($("#calc").append(e),
-	        e.val($(t).text()),
-	        navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-	            var r = e.get(0)
-	              , a = r.contentEditable
-	              , s = r.readOnly;
-	            r.contentEditable = !0,
-	            r.readOnly = !1;
-	            var n = document.createRange();
-	            n.selectNodeContents(r);
-	            var i = window.getSelection();
-	            i.removeAllRanges(),
-	            i.addRange(n),
-	            r.setSelectionRange(0, 999999),
-	            r.contentEditable = a,
-	            r.readOnly = s,
-	            alert("Скопировано")
-	        } else
-	            e.select();
-	        document.execCommand("copy"),
-	        e.blur(),
-	        e.remove()
-	    }
 	    $("#enddate").text(day[dates.getDay()] + " " + ("0" + dates.getDate()).substr(-2) + " " + month[dates.getMonth()] + " " + dates.getFullYear() + " года " + ("0" + dates.getHours()).substr(-2) + ":" + ("0" + dates.getMinutes()).substr(-2)),
 	    urlvv = document.location.host;
 	    var ringer = {
@@ -138,10 +113,10 @@
 	            }
 	        },
 	        r_count: 5,
-	        r_spacing: 25,
+	        r_spacing: 20,
 	        r_size: 200,
 	        r_thickness: 8,
-	        update_interval: 1,
+	        update_interval: 8,
 	        init: function() {
 	            $r = ringer,
 	            $r.cvs = document.createElement("canvas"),
